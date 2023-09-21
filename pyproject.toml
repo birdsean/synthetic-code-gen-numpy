@@ -8,6 +8,7 @@ packages = [{include = "syn_code_gen"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+openai = "^0.28.0"
 
 
 [build-system]
