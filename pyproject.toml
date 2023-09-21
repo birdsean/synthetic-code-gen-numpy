@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "syn-code-gen"
+version = "0.1.0"
+description = "Synthetic code generation environment"
+authors = ["Sean Bird <bird.seanmichael@gmail.com>"]
+readme = "README.md"
+packages = [{include = "syn_code_gen"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
