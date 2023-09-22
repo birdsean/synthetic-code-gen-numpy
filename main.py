@@ -50,31 +50,39 @@ def get_potential_inputs(function_code):
     """
     3. Send the function code to gpt 3.5 cat completion api and ask it for potential inputs to the function.
     """
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a superior coder who is very meticulous and thoughtful in your work. In answer to every prompt, "
-                + "first write a section titled THOUGHTS where you explain your thought process and why you are doing what you are doing. Then, create a "
-                + "new section titled ANSWER where you write the answer to the prompt, following instructions perfectly regarding formatting.",
-            },
-            {
-                "role": "user",
-                "content": "Given the following function:\n```"
-                + function_code
-                + "\n```\nReturn a list of valid inputs that would thoroughly test "
-                + "the capabilities of the function. Your answer should be a list of ten new line separated list of cases, where each "
-                + "case is a comma separated list of function parameter values.\nFor example, if the function was slice_string(str, start_index, "
-                + "end_index), your answer would look something like:\n\nANSWER:\n'foobar',0,3\n'test_string_2,0,0'\nJust respond with inputs, NO "
-                + "COMMENTARY, NO NUMBERING, NO LABELS, NO BULLET POINTS, NO DASHES. If the param value is a string, be sure to surround it with double quotes."
-                + "If the function takes no params, return an empty line. Each line should be unique."
-            },
-        ],
-    )
-    result = completion.choices[0].message.content
-    result = result.split("ANSWER:")[1]
-    return result
+    try:
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a superior coder who is very meticulous and thoughtful in your work. In answer to every prompt, "
+                    + "first write a section titled THOUGHTS where you explain your thought process and why you are doing what you are doing. Then, create a "
+                    + "new section titled ANSWER where you write the answer to the prompt, following instructions perfectly regarding formatting.",
+                },
+                {
+                    "role": "user",
+                    "content": "Given the following function:\n```"
+                    + function_code
+                    + "\n```\nReturn a list of valid inputs that would thoroughly test "
+                    + "the capabilities of the function. Your answer should be a list of ten new line separated list of cases, where each "
+                    + "case is a comma separated list of function parameter values.\nFor example, if the function was slice_string(str, start_index, "
+                    + "end_index), your answer would look something like:\n\nANSWER:\n'foobar',0,3\n'test_string_2,0,0'\nJust respond with inputs, NO "
+                    + "COMMENTARY, NO NUMBERING, NO LABELS, NO BULLET POINTS, NO DASHES. If the param value is a string, be sure to surround it with double quotes."
+                    + "If the function takes no params, return an empty line. Each line should be unique."
+                },
+            ],
+        )
+        result = completion.choices[0].message.content
+        try:
+            result = result.split("ANSWER:")[1]
+        except:
+            print(f'GPT failed with result: {result}')
+            return ''
+        return result
+    except Exception as e:
+        print(f'GPT failed with exception: {e}')
+        return ''
 
 
 def get_invocations(function_name, inputs):
@@ -157,7 +165,7 @@ def generate_invocation_outputs():
     print(f"Generating invocation outputs for {len(functions)} functions")
     for i, function_name in enumerate(functions.keys()):
         print(
-            f"Generating invocation outputs for {function_name}. {i+1}/{len(functions)}."
+            f"Generating invocation outputs for '{function_name}'. {i+1}/{len(functions)}."
         )
         if function_name not in public_functions:
             continue
@@ -182,9 +190,6 @@ def generate_invocation_outputs():
         with open("master_invocations.json", "w") as f:
             json.dump(master_invocations, f)
         
-        if i > 15:
-            break
-
     print(f"Generated {len(master_invocations)} invocation outputs")
     with open("master_invocations.json", "w") as f:
         json.dump(master_invocations, f)
