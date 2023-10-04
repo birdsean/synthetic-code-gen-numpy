@@ -4,6 +4,7 @@ import json
 invocations = json.load(open("master_invocations.json", "r"))
 
 successes = []
+perfects = []
 
 # each key of invocations is a function name
 # for each function name, get a count of outputs that have the key 'stderr' and 'stdout', print results
@@ -20,5 +21,8 @@ for function_name in invocations.keys():
     print(f"{function_name}: {stderr_count} stderr, {stdout_count} stdout")
     if stdout_count > 0:
         successes.append(function_name)
+    if stderr_count == 0:
+        perfects.append(function_name)
 
 print(f'{len(successes)} of {len(invocations.keys())} functions have at least one successful invocation. Percent: {(len(successes)/len(invocations.keys())):.2f}')
+print(f'{len(perfects)} of {len(invocations.keys())} functions have no failed invocations. Percent: {(len(perfects)/len(invocations.keys())):.2f}')

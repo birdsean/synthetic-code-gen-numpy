@@ -3,9 +3,6 @@
 2. Pick one function and go retrieve the code from the file address.
 3. Pass the function code to gpt 3.5 and ask it for potential inputs to the function.
 4. Run the inputs through the function and collect the outputs
-5. Use GPT 3.5 to rewrite the same function better
-6. Run the inputs through the function and collect the outputs
-7. Compare the outputs and see if they are the same.
 """
 
 import json
