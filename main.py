@@ -43,13 +43,13 @@ else:
 for i, function_name in enumerate(rewrites.keys()):
     print(f'Processing function {i+1}/{len(rewrites)}')
     outputs = master_invocations[function_name]['outputs']
+    results[function_name] = []
     for j, invocation in enumerate(outputs.keys()):
 
-        if results.get(invocation) is not None:
+        if results.get(function_name) is not None:
             continue
 
         print(f'Processing invocation {j+1}/{len(outputs)}. Invocation {i+1}/{len(rewrites)}')
-        results[invocation] = []
         if outputs[invocation][0] == 'stdout':
             expected = outputs[invocation][1]
         else:
@@ -60,19 +60,32 @@ for i, function_name in enumerate(rewrites.keys()):
 
         # if result is not stdout, save to results array
         if result[invocation][0] != 'stdout' or result[invocation][1] != expected:
-            results[invocation].append({
+            results[function_name].append({
                 'status': 'failed',
                 'expected': expected,
-                'actual': result[invocation][1]
+                'actual': result[invocation][1],
+                'invocation': invocation,
             })
         else:
-            results[invocation].append({
+            results[function_name].append({
                 'status': 'passed',
                 'expected': expected,
-                'actual': result[invocation][1]
+                'actual': result[invocation][1],
+                'invocation': invocation,
             })
-        print(f'Invocation {j+1}/{len(outputs)} {results[invocation][0]["status"]}')
-        
-    # save results to json
-    with open("results.json", "w") as f:
-        json.dump(results, f, indent=4)
+        print(f'Invocation {j+1}/{len(outputs)} {results[function_name][0]["status"]}')
+
+#save results to json
+with open("results.json", "w") as f:
+    json.dump(results, f, indent=4)
+
+# print each function with the count of passed and failed invocations
+for function_name in results.keys():
+    passed = 0
+    failed = 0
+    for invocation in results[function_name]:
+        if invocation['status'] == 'passed':
+            passed += 1
+        elif invocation['status'] == 'failed':
+            failed += 1
+    print(f'{function_name}: {passed} passed, {failed} failed')
