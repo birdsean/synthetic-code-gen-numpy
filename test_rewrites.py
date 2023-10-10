@@ -46,7 +46,7 @@ for i, function_name in enumerate(rewrites.keys()):
     results[function_name] = []
     for j, invocation in enumerate(outputs.keys()):
 
-        if results.get(function_name) is not None:
+        if len(results[function_name]) > len(outputs):
             continue
 
         print(f'Processing invocation {j+1}/{len(outputs)}. Invocation {i+1}/{len(rewrites)}')
@@ -75,9 +75,9 @@ for i, function_name in enumerate(rewrites.keys()):
             })
         print(f'Invocation {j+1}/{len(outputs)} {results[function_name][0]["status"]}')
 
-#save results to json
-with open("results.json", "w") as f:
-    json.dump(results, f, indent=4)
+    #save results to json
+    with open("results.json", "w") as f:
+        json.dump(results, f, indent=4)
 
 # print each function with the count of passed and failed invocations
 for function_name in results.keys():
