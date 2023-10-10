@@ -74,3 +74,11 @@ Some cool things could be done in a future version of these scripts:
 * Test different code generation prompts to do more invasive changes to each function
 * Benchmark the runtime of the original code and the rewritten code to see if there's a performance or memory improvement
 * Detect unit tests and use those to evaluate the success of the artificial code as well
+
+## Setup
+1. Install Python 3.8
+1. Install Docker
+1. Install [poetry](https://python-poetry.org/docs/#installation)
+
+## Running
+`poetry run python [script_name].py`
